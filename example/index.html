@@ -44,7 +44,7 @@
 
     <div id="app">
 
-        <div class="container" data-drag="container">
+        <div id="con1" class="container" data-drag="container">
 
             <div class="item" data-drag="item"><span>Application</span></div>
             <div class="item" data-drag="item">
@@ -68,13 +68,13 @@
 
         </div>
 
-        <div class="container" data-drag="container">
+        <div id="con2" class="container" data-drag="container">
 
 
         </div>
 
 
-        <div class="container" data-drag="container">
+        <div id="con3" class="container" data-drag="container">
 
 
 
@@ -89,6 +89,7 @@
             onDrop(selected_item) {
                 console.log(selected_item);
             },
+            // containers: [con1, con3]
         });
     </script>
 </body>

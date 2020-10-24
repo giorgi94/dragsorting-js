@@ -1,8 +1,12 @@
 class DragSorting {
-    constructor({ onDrop = null }) {
-        this.containers = [
-            ...document.querySelectorAll('[data-drag="container"]'),
-        ];
+    constructor({ onDrop = null, containers = null }) {
+        if (!containers) {
+            this.containers = [
+                ...document.querySelectorAll('[data-drag="container"]'),
+            ];
+        } else {
+            this.containers = [...containers];
+        }
 
         this.selected_item = null;
 
