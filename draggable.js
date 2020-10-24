@@ -1,6 +1,8 @@
 class DragSorting {
-    constructor({ containers = [], onDrop = null }) {
-        this.containers = [...containers];
+    constructor({ onDrop = null }) {
+        this.containers = [
+            ...document.querySelectorAll('[data-drag="container"]'),
+        ];
 
         this.selected_item = null;
 
@@ -10,13 +12,20 @@ class DragSorting {
             typeof onDrop === "function" ? onDrop.bind(this) : () => {};
 
         this.containers.forEach((c) => {
-            this.dragitems.push(...c.querySelectorAll("[draggable]"));
+            this.dragitems.push(...c.querySelectorAll('[data-drag="item"]'));
         });
 
         this.dragitems.forEach((item) => {
+            item.onmousedown = () => (item.draggable = true);
+            item.onmouseleave = () => (item.draggable = false);
+
             item.ondragstart = () => (this.selected_item = item);
             item.ondrag = this.handleDrag.bind(this);
             item.ondragend = this.handleDrop.bind(this);
+
+            item.ontouchstart = () => (this.selected_item = item);
+            item.ontouchmove = this.handleTouchMove.bind(this);
+            item.ontouchend = this.handleDrop.bind(this);
         });
     }
 
@@ -30,6 +39,18 @@ class DragSorting {
     }
 
     reOrder(items = []) {}
+
+    handleTouchMove(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const touchlocation = event.targetTouches[0];
+
+        this.handleDrag({
+            clientX: touchlocation.clientX,
+            clientY: touchlocation.clientY,
+        });
+    }
 
     handleDrag(event) {
         const selected_item = this.selected_item;
@@ -67,6 +88,5 @@ class DragSorting {
 }
 
 window.sortable = new DragSorting({
-    containers: document.querySelectorAll(".container"),
     onDrop(selected_item) {},
 });
