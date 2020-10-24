@@ -6,7 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
-    <link ink rel="stylesheet" href="main.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .box {
+            width: 25px;
+            height: 25px;
+            position: absolute;
+            background-color: #000;
+            top: 6px;
+            right: 3px;
+        }
+
+
+        .container {
+            border: 1px solid #000;
+            padding: 10px;
+            margin: 10px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .item {
+            width: 100px;
+            border: 1px solid #000;
+            padding: 10px;
+            position: relative;
+        }
+    </style>
 </head>
 
 <body>
@@ -16,7 +47,9 @@
         <div class="container" data-drag="container">
 
             <div class="item" data-drag="item"><span>Application</span></div>
-            <div class="item" data-drag="item"><span>Blank</span></div>
+            <div class="item" data-drag="item">
+                <div class="box" data-drag="handle"></div><span>Blank</span>
+            </div>
             <div class="item" data-drag="item"><span>Class</span></div>
             <div class="item" data-drag="item"><span>Data</span></div>
             <div class="item" data-drag="item"><span>Element</span></div>
@@ -50,7 +83,14 @@
 
     </div>
 
-    <script src="draggable.js"></script>
+    <script src="../dragsorting.js"></script>
+    <script>
+        window.sortable = new DragSorting({
+            onDrop(selected_item) {
+                console.log(selected_item);
+            },
+        });
+    </script>
 </body>
 
 </html>

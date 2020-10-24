@@ -12,21 +12,39 @@ class DragSorting {
             typeof onDrop === "function" ? onDrop.bind(this) : () => {};
 
         this.containers.forEach((c) => {
+            c.draggable = false;
             this.dragitems.push(...c.querySelectorAll('[data-drag="item"]'));
         });
 
         this.dragitems.forEach((item) => {
-            item.onmousedown = () => (item.draggable = true);
-            item.onmouseleave = () => (item.draggable = false);
+            item.onmousedown = (event) => {
+                item.draggable = this.canDrag(item, event.target);
+            };
 
-            item.ondragstart = () => (this.selected_item = item);
+            item.ondragstart = () => {
+                this.selected_item = item;
+            };
+
             item.ondrag = this.handleDrag.bind(this);
             item.ondragend = this.handleDrop.bind(this);
 
-            item.ontouchstart = () => (this.selected_item = item);
+            item.ontouchstart = () => {
+                item.draggable = this.canDrag(item, event.target);
+                if (item.draggable) {
+                    this.selected_item = item;
+                }
+            };
+
             item.ontouchmove = this.handleTouchMove.bind(this);
             item.ontouchend = this.handleDrop.bind(this);
         });
+    }
+
+    canDrag(item, target) {
+        return (
+            !item.querySelector('[data-drag="handle"]') ||
+            target.dataset.drag === "handle"
+        );
     }
 
     toJSON() {
@@ -53,12 +71,16 @@ class DragSorting {
     }
 
     handleDrag(event) {
+        if (!this.selected_item) {
+            return;
+        }
+
         const selected_item = this.selected_item;
 
         const x = event.clientX;
         const y = event.clientY;
 
-        selected_item.classList.add("drag-active");
+        selected_item.style.opacity = 0.1;
 
         let swap_item = document.elementFromPoint(x, y);
 
@@ -81,12 +103,16 @@ class DragSorting {
     }
 
     handleDrop(event) {
-        this.selected_item.classList.remove("drag-active");
-        this.onDrop(this.selected_item);
+        if (!this.selected_item) {
+            return;
+        }
+
+        const item = this.selected_item;
+
         this.selected_item = null;
+        item.style.opacity = 1;
+        item.draggable = false;
+
+        this.onDrop(item);
     }
 }
-
-window.sortable = new DragSorting({
-    onDrop(selected_item) {},
-});
